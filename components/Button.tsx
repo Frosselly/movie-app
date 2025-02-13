@@ -14,9 +14,7 @@ export default function Button({ label, theme, href, icon }: Props) {
     return (
       <View
         style={[
-          styles.buttonContainer,
-          { borderWidth: 4, borderColor: "#ffd33d", borderRadius: 18 },
-        ]}
+          styles.buttonContainer]}
       >
         <Link
           href={href as RelativePathString}
@@ -68,6 +66,7 @@ const styles = StyleSheet.create({
     width: 320,
     height: 68,
     marginHorizontal: 20,
+    marginVertical: 2,
     alignItems: "center",
     justifyContent: "center",
     padding: 3,
@@ -79,6 +78,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
+    borderColor: "#fff",
+    borderWidth: 2,
+    
   },
   buttonIcon: {
     paddingRight: 8,
