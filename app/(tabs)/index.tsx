@@ -4,8 +4,11 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { movies } from "@/other/mock-data";
 
 export default function Index() {
+  
+
   return (
     <View style={styles.container}>
         <FlatList 
@@ -13,7 +16,7 @@ export default function Index() {
                 renderItem={({item}) => {
                     return (
                         <View style={styles.movieContainer}>
-                            <MovieSection />
+                            <MovieSection movies={movies}/>
                         </View>
                     )
                  }}
@@ -49,25 +52,3 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 });
-
-const movies = [
-  {
-    title: "The Shawshank Redemption",
-    year: 1994,
-    rating: 9.3,
-  },
-  {
-    title: "The Godfather",
-    year: 1972,
-    rating: 9.2,
-  },
-  {
-    title: "The Dark Knight",
-    year: 2008,
-    rating: 9.0,
-  },
-];
-
-const Sections = [
-
-]

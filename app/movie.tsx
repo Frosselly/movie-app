@@ -1,18 +1,20 @@
 import { Link } from "expo-router";
 import { Text, View, StyleSheet, ScrollView } from "react-native";
-import { Image } from "expo-image";
+import { Image, ImageSource } from "expo-image";
 
 import ImageViewer from "@/components/ImageViewer";
 import Button from "@/components/Button";
 import MovieSection from "@/components/MovieSection";
 
-const PlaceholderImage = require("@/assets/images/background-image.png");
 
-export default function MovieDetails() {
+import { movies, type Movie } from "@/other/mock-data";
+
+export default function MovieDetails(props : {movie: Movie}) {
+  console.log(props.movie.imgSource); 
   return (
     <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.imageContainer}>
-          <ImageViewer imgSource={PlaceholderImage} />
+          <ImageViewer imgSource={props.movie.imgSource} />
         </View>
         <View>
           <View>
@@ -30,7 +32,7 @@ export default function MovieDetails() {
           </View>
         </View>
         <View style={styles.movieContainer}>
-          <MovieSection />
+          <MovieSection movies={movies}/>
         </View>
     </ScrollView>
   );

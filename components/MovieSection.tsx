@@ -1,22 +1,23 @@
 import MovieCard from "@/components/MovieCard";
+import { Movie } from "@/other/mock-data";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
 
-export default function MovieSection() {
+export default function MovieSection(props : {movies: Movie[]}) {
   return (
       <>
         <Text style={[styles.text, {marginLeft:10, fontSize:18}]}>Category Title</Text>
           <FlatList
           horizontal={true}
-          data={movies}
-          renderItem={({item}) => {
+          data={props.movies}
+          renderItem={({item: movie}) => {
               return (
                   <View style={styles.movieContainer}>
-                      <MovieCard movie={item} />
+                      <MovieCard movie={movie} />
                   </View>
               )
           }}
-          keyExtractor={item => item.title}
+          keyExtractor={movie => movie.id.toString()}
         />
       </>
         
@@ -43,21 +44,3 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 });
-
-const movies = [
-  {
-    title: "The Shawshank Redemption",
-    year: 1994,
-    rating: 9.3,
-  },
-  {
-    title: "The Godfather",
-    year: 1972,
-    rating: 9.2,
-  },
-  {
-    title: "The Dark Knight",
-    year: 2008,
-    rating: 9.0,
-  },
-];

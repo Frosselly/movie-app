@@ -1,23 +1,19 @@
+import type { Movie } from "@/other/mock-data";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
 
-const PlaceholderImage = require("@/assets/images/background-image.png");
 
-type Props = {
-    movie?: {
-        title: string;
-        year: number;
-        rating: number;
-    };
-};
-
-export default function MovieCard({ movie }: Props) {
+export default function MovieCard(props: { movie: Movie}) {
+  
   return (
-    <Link href="../movie" style={styles.imageContainer} asChild>
+    <Link href={{
+      pathname: "../movie",
+      params: { id: props.movie.id },
+    }} style={styles.imageContainer} asChild>
       <Pressable>
-        <Image source={PlaceholderImage} style={{ width: 200, height: 200 }} />
-        <Text style={styles.text}>Go to About screen</Text>
+        <Image source={props.movie.imgSource} style={{ width: 200, height: 200 }} />
+        <Text style={styles.text}>{props.movie.title}</Text>
       </Pressable>
     </Link>
   );

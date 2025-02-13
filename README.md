@@ -11,5 +11,6 @@
 - [x] Add video player
 - [x] Add routing between movie card and browse page
 - [x] Add Home page
+- [ ] Add fake data passing
 - [ ] Fetch data from API
 - [ ] Refactor code
