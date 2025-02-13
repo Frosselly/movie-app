@@ -5,7 +5,7 @@ import { Link, RelativePathString, useNavigation } from "expo-router";
 type Props = {
   label: string;
   theme?: "primary";
-  href: RelativePathString;
+  href: string;
   icon?: string;
 };
 
@@ -18,14 +18,20 @@ export default function Button({ label, theme, href, icon }: Props) {
           { borderWidth: 4, borderColor: "#ffd33d", borderRadius: 18 },
         ]}
       >
-        <Link href={href as RelativePathString} style={[styles.button, { backgroundColor: "#fff" }]} asChild>
+        <Link
+          href={href as RelativePathString}
+          style={[styles.button, { backgroundColor: "#fff" }]}
+          asChild
+        >
           <Pressable>
-            <FontAwesome
-              name={icon as any}
-              size={18}
-              color="#25292e"
-              style={styles.buttonIcon}
-            />
+            {icon && (
+              <FontAwesome
+                name={icon as any}
+                size={18}
+                color="#fff"
+                style={styles.buttonIcon}
+              />
+            )}
             <Text style={[styles.buttonLabel, { color: "#25292e" }]}>
               {label}
             </Text>
@@ -36,14 +42,20 @@ export default function Button({ label, theme, href, icon }: Props) {
   }
   return (
     <View style={styles.buttonContainer}>
-      <Link href={href as RelativePathString ?? '/'} style={styles.button} asChild>
+      <Link
+        href={(href as RelativePathString) ?? "/"}
+        style={styles.button}
+        asChild
+      >
         <Pressable>
-          <FontAwesome
+          {icon && (
+            <FontAwesome
               name={icon as any}
               size={18}
               color="#fff"
               style={styles.buttonIcon}
             />
+          )}
           <Text style={styles.buttonLabel}>{label}</Text>
         </Pressable>
       </Link>

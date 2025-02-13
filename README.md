@@ -1,7 +1,7 @@
 ## TODO
 
 - [x] Fake data UI setup
-- [ ] Home, browse and details page routing
+- [x] Home, browse and details page routing
 - [ ] Fetch data drom https://www.themoviedb.org/documentation/api
 
 
@@ -10,6 +10,6 @@
 - [x] Add browse page
 - [x] Add video player
 - [x] Add routing between movie card and browse page
-- [ ] Add Home page
-- [ ] Refactor code
+- [x] Add Home page
 - [ ] Fetch data from API
+- [ ] Refactor code
