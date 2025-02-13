@@ -4,21 +4,22 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 
 export default function MovieSection() {
   return (
-      <View style={styles.moviesSection}>
+      <>
         <Text style={[styles.text, {marginLeft:10, fontSize:18}]}>Category Title</Text>
-        <FlatList
-        horizontal={true}
-        data={movies}
-        renderItem={({item}) => {
-            return (
-                <View style={styles.movieContainer}>
-                    <MovieCard movie={item} />
-                </View>
-            )
-         }}
-        keyExtractor={item => item.title}
-      />
-      </View>
+          <FlatList
+          horizontal={true}
+          data={movies}
+          renderItem={({item}) => {
+              return (
+                  <View style={styles.movieContainer}>
+                      <MovieCard movie={item} />
+                  </View>
+              )
+          }}
+          keyExtractor={item => item.title}
+        />
+      </>
+        
   );
 }
 

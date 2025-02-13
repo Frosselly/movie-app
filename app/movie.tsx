@@ -14,8 +14,8 @@ export default function MovieDetails() {
         <ImageViewer imgSource={PlaceholderImage}/>
       </View>
       <View style={styles.footerContainer}>
-        <Button theme="primary" label='Play movie'/>
-        <Button label='Add to library'/>
+        <Button href="./player" theme="primary" label='Play movie'/>
+        <Button href="./player" label='Add to library'/>
       </View>
     </View>
   );
