@@ -1,5 +1,5 @@
 import MovieCard from "@/components/MovieCard";
-import { Movie } from "@/other/mock-data";
+import { Movie } from "@/utils/mock-data";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
 

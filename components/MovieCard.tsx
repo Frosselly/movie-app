@@ -1,8 +1,7 @@
-import type { Movie } from "@/other/mock-data";
+import type { Movie } from "@/utils/mock-data";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
-
 
 export default function MovieCard(props: { movie: Movie}) {
   

@@ -4,19 +4,26 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { movies } from "@/other/mock-data";
+import {type Movie, movies as moviesData } from "@/utils/mock-data";
+
+import { useEffect } from "react";
+import { Storage } from "@/utils/storage";
 
 export default function Index() {
-  
+
+  useEffect(() => {
+    Storage.storeData(moviesData);
+  }, [])
+
 
   return (
     <View style={styles.container}>
         <FlatList 
-                data={movies}
+                data={moviesData}
                 renderItem={({item}) => {
                     return (
                         <View style={styles.movieContainer}>
-                            <MovieSection movies={movies}/>
+                            <MovieSection movies={moviesData}/>
                         </View>
                     )
                  }}
