@@ -6,18 +6,11 @@ import ImageViewer from "@/components/ImageViewer";
 import Button from "@/components/Button";
 import MovieSection from "@/components/MovieSection";
 
-import type { Movie } from "@/utils/mock-data";
+import { fallbackMovie, type Movie } from "@/utils/mock-data";
 import { Storage } from "@/utils/storage";
 import { useEffect, useState } from "react";
 
-const fallbackMovie: Movie = {
-  id: 0,
-  title: "Movie Title",
-  imgSource: require("@/assets/images/icon.png"),
-  description: "Description",
-  year: 2021,
-  rating: 0,
-};
+
 
 export default function MovieDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -34,7 +27,10 @@ export default function MovieDetails() {
   }, [id]);
 
   return (
-    <ScrollView style={{backgroundColor: "#25292e"}} contentContainerStyle={styles.container}>
+    <ScrollView
+      style={{ backgroundColor: "#25292e" }}
+      contentContainerStyle={styles.container}
+    >
       <View style={styles.imageContainer}>
         <ImageViewer imgSource={movie.imgSource} />
       </View>
@@ -44,7 +40,11 @@ export default function MovieDetails() {
           <Text style={styles.description}>{movie.description}</Text>
         </View>
         <View style={styles.footerContainer}>
-          <Button href="./player" theme="primary" label="Play movie" />
+          <Button
+            href={`./player?id=${id}`}
+            theme="primary"
+            label="Play movie"
+          />
           <Button href="./player" label="Add to library" />
         </View>
       </View>

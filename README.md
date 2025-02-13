@@ -2,15 +2,17 @@
 
 - [x] Fake data UI setup
 - [x] Home, browse and details page routing
-- [ ] Fetch data drom https://www.themoviedb.org/documentation/api
+- [x] Fetch data from https://www.themoviedb.org/documentation/api
+- [ ] User login
 
 
-## 12-02
+## 14-02
 
-- [x] Add browse page
-- [x] Add video player
-- [x] Add routing between movie card and browse page
-- [x] Add Home page
-- [ ] Add fake data passing
-- [ ] Fetch data from API
-- [ ] Refactor code
+- [ ] Add related movies to details page
+- [ ] Fetch movies by different options
+- [ ] Update UI
+- [ ] Add User data saving (login, add to library)
+- [ ] Use cache to save between sessions
+- [ ] Add refresh
+- [ ] Add load extra movies on scroll
+

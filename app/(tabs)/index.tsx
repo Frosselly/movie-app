@@ -4,26 +4,35 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
-import {type Movie, movies as moviesData } from "@/utils/mock-data";
+import {type Movie} from "@/utils/mock-data";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Storage } from "@/utils/storage";
+import { Queries } from "@/utils/queries";
+
+import { movies as mockMovies } from "@/utils/mock-data";
 
 export default function Index() {
+  const [movies, setMovies] = useState<Movie[]>(mockMovies);
 
   useEffect(() => {
-    Storage.storeData(moviesData);
+    Queries.getMovies().then((movies) => {
+      Storage.storeData(movies);
+      setMovies(movies);
+    }).catch((error) => {
+      console.log("Failed to fetch movies:", error);
+    });
   }, [])
 
 
   return (
     <View style={styles.container}>
         <FlatList 
-                data={moviesData}
+                data={movies}
                 renderItem={({item}) => {
                     return (
                         <View style={styles.movieContainer}>
-                            <MovieSection movies={moviesData}/>
+                            <MovieSection movies={movies}/>
                         </View>
                     )
                  }}

@@ -1,38 +1,52 @@
-import { Link } from "expo-router";
-import { Text, View, StyleSheet, ScrollView, Button } from "react-native";
-import { useVideoPlayer, VideoView } from 'expo-video';
+import { Link, useLocalSearchParams } from "expo-router";
+import { Text, View, StyleSheet, ScrollView, Button, Alert } from "react-native";
+import { useVideoPlayer, VideoSource, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
 
 import ImageViewer from "@/components/ImageViewer";
 import MovieSection from "@/components/MovieSection";
+import { type Movie, fallbackMovie } from "@/utils/mock-data";
+import { useCallback, useEffect, useState } from "react";
+import { Storage } from "@/utils/storage";
+import YoutubePlayer from "react-native-youtube-iframe";
 
 const videoSource =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
 export default function MovieDetails() {
-  const player = useVideoPlayer(videoSource, player => {
-    player.loop = true;
-    player.play();
-  });
+const { id } = useLocalSearchParams<{ id: string }>();
 
-  const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
+  const [movie, setMovie] = useState<Movie>(fallbackMovie);
 
+  useEffect(() => {
+    Storage.getData().then((data) => {
+      const foundMovie = data.find((movie: Movie) => movie.id === parseInt(id));
+      setMovie(foundMovie);
+    });
+    
+  }, [id]);
+
+  
+  const onStateChange = useCallback((state:any) => {
+    if (state === "ended") {
+      setPlaying(false);
+      Alert.alert("video has finished playing!");
+    }
+  }, []);
+  const [playing, setPlaying] = useState(true);
+  const togglePlaying = useCallback(() => {
+    setPlaying((prev) => !prev);
+  }, []);
 
   return (
-    <View style={styles.contentContainer}>
-        <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
-        <View style={styles.controlsContainer}>
-        <Button
-          title={isPlaying ? 'Pause' : 'Play'}
-          onPress={() => {
-            if (isPlaying) {
-              player.pause();
-            } else {
-              player.play();
-            }
-          }}
-        />
-        </View>
+    <View>
+      <YoutubePlayer
+        height={300}
+        play={playing}
+        videoId={movie.videoSource}
+        onChangeState={onStateChange}
+      />
+      <Button title={playing ? "pause" : "play"} onPress={togglePlaying} />
     </View>
   );
 }

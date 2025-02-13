@@ -5,7 +5,7 @@ import { Link, RelativePathString, useNavigation } from "expo-router";
 type Props = {
   label: string;
   theme?: "primary";
-  href: string;
+  href: RelativePathString;
   icon?: string;
 };
 
