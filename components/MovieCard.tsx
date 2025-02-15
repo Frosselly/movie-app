@@ -6,10 +6,7 @@ import { Pressable, StyleSheet, Text } from "react-native";
 export default function MovieCard(props: { movie: Movie}) {
   
   return (
-    <Link href={{
-      pathname: "../movie",
-      params: { id: props.movie.id },
-    }} style={styles.imageContainer} asChild>
+    <Link href={`../${props.movie.id}/movie`} style={styles.imageContainer} asChild>
       <Pressable>
         <Image source={props.movie.imgSource} style={{ width: 200, height: 200 }} />
         <Text style={styles.text}>{props.movie.title}</Text>
@@ -26,6 +23,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   text: {
+    width: 200,
     color: "#fff",
+    maxHeight: 40,
   },
 });

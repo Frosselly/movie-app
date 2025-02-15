@@ -8,11 +8,9 @@
 
 ## 14-02
 
-- [ ] Add related movies to details page
-- [ ] Fetch movies by different options
+- [x] Add related movies to details page
+- [x] Fetch movies by different options
 - [ ] Update UI
 - [ ] Add User data saving (login, add to library)
-- [ ] Use cache to save between sessions
-- [ ] Add refresh
-- [ ] Add load extra movies on scroll
+- [x] Add refresh
 

@@ -3,10 +3,13 @@ import { Movie } from "@/utils/mock-data";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
 
-export default function MovieSection(props : {movies: Movie[]}) {
+export default function MovieSection(props : {
+  movies: Movie[],
+  title: string
+}) {
   return (
       <>
-        <Text style={[styles.text, {marginLeft:10, fontSize:18}]}>Category Title</Text>
+        <Text style={[styles.text, {marginLeft:10, fontSize:18}]}>{props.title}</Text>
           <FlatList
           horizontal={true}
           data={props.movies}

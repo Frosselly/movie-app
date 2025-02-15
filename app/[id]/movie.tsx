@@ -1,5 +1,11 @@
 import { Link, useLocalSearchParams } from "expo-router";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { Image, ImageSource } from "expo-image";
 
 import ImageViewer from "@/components/ImageViewer";
@@ -9,8 +15,8 @@ import MovieSection from "@/components/MovieSection";
 import { fallbackMovie, type Movie } from "@/utils/mock-data";
 import { Storage } from "@/utils/storage";
 import { useEffect, useState } from "react";
-
-
+import { Queries } from "@/utils/queries";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function MovieDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,12 +25,35 @@ export default function MovieDetails() {
   const [movie, setMovie] = useState<Movie>(fallbackMovie);
 
   useEffect(() => {
-    Storage.getData().then((data) => {
-      setMovies(data);
-      const foundMovie = data.find((movie: Movie) => movie.id === parseInt(id));
-      setMovie(foundMovie);
+    Storage.getData(id).then((movie) => {
+      setMovie(movie);
+
+      getMovieGenres(movie.id);
     });
   }, [id]);
+
+  const getMovieGenres = async (id: number) => {
+    const genres = await Queries.getMovieGenres(id);
+    if (!genres || !genres.length) return;
+
+    const genreIds = genres.map((genre: { id: number }) => genre.id);
+    const moviesByGenres = await Queries.getMoviesByGenres(genreIds);
+
+    if (!moviesByGenres || !moviesByGenres.length) return;
+
+    setMovies(moviesByGenres);
+    Storage.storeData(moviesByGenres);
+
+    return genres;
+  };
+
+  if (!movie) {
+    return (
+      <View style={styles.container}>
+        <LoadingScreen />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -32,7 +61,7 @@ export default function MovieDetails() {
       contentContainerStyle={styles.container}
     >
       <View style={styles.imageContainer}>
-        <ImageViewer imgSource={movie.imgSource} />
+        <ImageViewer imgSource={movie?.imgSource ?? fallbackMovie.imgSource} />
       </View>
       <View>
         <View>
@@ -50,7 +79,7 @@ export default function MovieDetails() {
       </View>
       {movies.length > 0 && (
         <View style={styles.movieContainer}>
-          <MovieSection movies={movies} />
+          <MovieSection title="Similar movies" movies={movies} />
         </View>
       )}
     </ScrollView>

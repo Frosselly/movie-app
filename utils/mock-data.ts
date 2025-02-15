@@ -9,12 +9,13 @@ export type Movie = {
     description: string;
     imgSource: ImageSource;
     videoSource: string;
+    genres?: number[];
 };
 
 export const fallbackMovie: Movie = {
     id: 0,
     title: "Movie Title",
-    imgSource: require("@/assets/images/icon.png"),
+    imgSource: require("@/assets/images/Image-not-found.png"),
     description: "Description",
     year: "2021",
     rating: 0,
