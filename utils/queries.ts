@@ -37,13 +37,14 @@ export const Queries = {
         .then(async json => {
             const movies = await Promise.all(
                 json.results.map((movie: any) => {
+                    const imageSource = movie.poster_path === null ? null : { uri: 'https://image.tmdb.org/t/p/w500' + movie.poster_path};
                 return {
                     id: movie.id,
                     title: movie.original_title,
                     year: movie.release_date,
                     rating: movie.vote_average,
                     description: movie.overview,
-                    imgSource: { uri: 'https://image.tmdb.org/t/p/w500' + movie.poster_path },
+                    imgSource: imageSource,
                     videoSource:  'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
                 } as Movie;
             }));

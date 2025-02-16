@@ -7,7 +7,8 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  Text
 } from "react-native";
 
 import { type Movie } from "@/utils/mock-data";
@@ -18,6 +19,7 @@ import { Queries } from "@/utils/queries";
 
 import { movies as mockMovies } from "@/utils/mock-data";
 import LoadingScreen from "@/components/LoadingScreen";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const [movies, setMovies] = useState<Movie[][]>([]);
@@ -75,12 +77,16 @@ export default function Index() {
     }
     
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        
       >
+        <Text style={styles.header}>Discover</Text>
+        <View style={styles.moviesSection}>
         <View style={styles.movieContainer}>
           <MovieSection title="Popular" movies={movies[0]} />
         </View>
@@ -90,25 +96,26 @@ export default function Index() {
         <View style={styles.movieContainer}>
           <MovieSection title="Released" movies={movies[2]} />
         </View>
+        </View>
       </ScrollView>
-    </View>
+    
+    
+    </SafeAreaView>
+    
   );
 }
 
 const styles = StyleSheet.create({
   
   container: {
-    flex: 1,
+    
     backgroundColor: "#25292e",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    gap: 40,
+    
+    paddingLeft: 20,
+    paddingVertical: 20,
   },
   moviesSection: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    gap: 8,
+    gap: 10,
   },
   moviesCarousel: {
     flexDirection: "row",
@@ -117,9 +124,12 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   movieContainer: {
-    margin: 10,
+    gap:12
   },
-  text: {
+  header: {
     color: "#fff",
+    fontSize: 24,
+    textDecorationLine: "underline",
+    marginBottom: 32,
   },
 });

@@ -28,7 +28,7 @@ export default function MovieDetails() {
     Storage.getData("all-movies").then((movies) => {
       const movie = movies.find((movie: Movie) => movie.id === parseInt(id));
       setMovie(movie);
-
+      console.log(movie);
       getMovieGenres(movie.id);
     });
   }, [id]);
@@ -63,19 +63,20 @@ export default function MovieDetails() {
       style={{ backgroundColor: "#25292e" }}
       contentContainerStyle={styles.container}
     >
+      
+      <View style={styles.content}>
       <View style={styles.imageContainer}>
         <ImageViewer imgSource={movie?.imgSource ?? fallbackMovie.imgSource} />
       </View>
-      <View>
         <View>
           <Text style={styles.title}>{movie.title}</Text>
           <Text style={styles.description}>{movie.description}</Text>
         </View>
-        <View style={styles.footerContainer}>
+        <View style={styles.buttonContainer}>
           <Button
             href={`./player?id=${id}`}
             theme="primary"
-            label="Play movie"
+            label="Watch trailer"
           />
           <Button href="./player" label="Add to library" />
         </View>
@@ -94,12 +95,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#25292e",
     alignItems: "center",
     gap: 20,
+    paddingLeft: 20,
+    paddingVertical: 20,
+  },
+  content: {
+    marginRight: 20,
+    gap: 25,
   },
   imageContainer: {
-    marginTop: 20,
+    
   },
-  footerContainer: {
+  buttonContainer: {
     alignItems: "center",
+    gap: 10,
+    marginBottom: 20,
   },
   title: {
     color: "#fff",
@@ -112,6 +121,6 @@ const styles = StyleSheet.create({
   },
 
   movieContainer: {
-    margin: 10,
+    gap:12
   },
 });

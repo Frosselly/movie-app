@@ -9,7 +9,7 @@ export default function MovieSection(props : {
 }) {
   return (
       <>
-        <Text style={[styles.text, {marginLeft:10, fontSize:18}]}>{props.title}</Text>
+        <Text style={[styles.text, {fontSize:18}]}>{props.title}</Text>
           <FlatList
           horizontal={true}
           data={props.movies}
@@ -29,21 +29,13 @@ export default function MovieSection(props : {
 
 const styles = StyleSheet.create({
   moviesSection: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "flex-start",
     gap: 8,
   },
-  moviesCarousel: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 20,
-  },
   movieContainer: {
-    margin: 10,
+    marginRight: 18,
   },
   text: {
     color: "#fff",
+    // fontWeight: "bold",
   },
 });

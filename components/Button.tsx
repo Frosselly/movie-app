@@ -63,13 +63,13 @@ export default function Button({ label, theme, href, icon }: Props) {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    width: 320,
-    height: 68,
-    marginHorizontal: 20,
+    width: "100%",
+    height: 60,
+    
     marginVertical: 2,
     alignItems: "center",
     justifyContent: "center",
-    padding: 3,
+    
   },
   button: {
     borderRadius: 10,
@@ -88,5 +88,6 @@ const styles = StyleSheet.create({
   buttonLabel: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "bold",
   },
 });

@@ -53,11 +53,11 @@ export default function MovieDetails() {
   }, []);
 
   return (
-    <View>
+    <View style={styles.contentContainer}>
       {movie.videoSource ? (
         <>
           <YoutubePlayer
-            height={300}
+            height={200}
             play={playing}
             videoId={movie.videoSource}
             onChangeState={onStateChange}
@@ -74,10 +74,10 @@ export default function MovieDetails() {
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 50,
+    gap: 20,
+    backgroundColor: "#25292e",
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   video: {
     width: 350,
