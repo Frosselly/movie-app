@@ -17,11 +17,14 @@ export const Storage = {
     return timeDiff;
   },
 
-  storeData: async function (movies: Movie[]) {
-    for (const movie of movies) {
-      const jsonValue = JSON.stringify(movie);
-      await AsyncStorage.setItem(movie.id.toString(), jsonValue);
-    }
+  storeData: async function (key: string, movies: Movie[]) {
+    const json= JSON.stringify(movies);
+    await AsyncStorage.setItem(key, json);
+    
+    // for (const movie of movies) {
+    //   const jsonValue = JSON.stringify(movie);
+    //   await AsyncStorage.setItem(movie.id.toString(), jsonValue);
+    // }
   },
 
   getData: async function (key: string) {

@@ -24,18 +24,16 @@ export default function Index() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    // Storage.getTimeDiff().then((timeDiff) => {
-    //   if (timeDiff > 1000 * 60 * 60) {
-    //     fetchMovies();
-    //   }
-    //   else {
-    //     Storage.getData("movies").then((data) => {
-    //       setMovies(data);
-    //     });
-    //   }
-    // });
-    console.log("fetching movies");
-    fetchMovies();
+    const timeForRefresh = 1000 * 60 * 60; // 1 hour
+    Storage.getTimeDiff().then((timeDiff) => {
+      if (timeDiff > timeForRefresh) {
+        console.log("Fetching movies...");
+        fetchMovies();
+      }
+      else {
+        getSavedMovies();
+      }
+    });
   }, []);
 
   const fetchMovies = async () => {
@@ -46,8 +44,23 @@ export default function Index() {
     ]);
     const fetchedMovies = [popular, upcoming, released];
     setMovies(fetchedMovies);
-    Storage.storeData(fetchedMovies.flat());
+
+    Storage.storeTime();
+    Storage.storeData("popular", fetchedMovies[0]);
+    Storage.storeData("upcoming", fetchedMovies[1]);
+    Storage.storeData("released", fetchedMovies[2]);
+    Storage.storeData("all-movies", fetchedMovies.flat());
   };
+
+  const getSavedMovies = async () => {
+    const [popular, upcoming, released] = await Promise.all([
+      Storage.getData("popular"),
+      Storage.getData("upcoming"),
+      Storage.getData("released"),
+    ]);
+    setMovies([popular, upcoming, released]);
+    
+  }
 
   const onRefresh = useCallback(() => {
     fetchMovies();

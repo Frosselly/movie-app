@@ -25,7 +25,8 @@ export default function MovieDetails() {
   const [movie, setMovie] = useState<Movie>(fallbackMovie);
 
   useEffect(() => {
-    Storage.getData(id).then((movie) => {
+    Storage.getData("all-movies").then((movies) => {
+      const movie = movies.find((movie: Movie) => movie.id === parseInt(id));
       setMovie(movie);
 
       getMovieGenres(movie.id);
@@ -42,7 +43,9 @@ export default function MovieDetails() {
     if (!moviesByGenres || !moviesByGenres.length) return;
 
     setMovies(moviesByGenres);
-    Storage.storeData(moviesByGenres);
+
+    const allMovies = await Storage.getData("all-movies")
+    Storage.storeData("all-movies", [...allMovies, ...moviesByGenres]);
 
     return genres;
   };
