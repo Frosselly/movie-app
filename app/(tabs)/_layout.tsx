@@ -32,6 +32,21 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
+        name="library"
+        options={{
+          title: "Library",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={
+                focused ? "information-circle" : "information-circle-outline"
+              }
+              color={color}
+              size={24}
+            ></Ionicons>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="about"
         options={{
           title: "Search",

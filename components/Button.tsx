@@ -7,9 +7,10 @@ type Props = {
   theme?: "primary";
   href: RelativePathString;
   icon?: string;
+  onPress?: () => void;
 };
 
-export default function Button({ label, theme, href, icon }: Props) {
+export default function Button({ label, theme, href, icon, onPress }: Props) {
   if (theme === "primary") {
     return (
       <View
@@ -21,7 +22,7 @@ export default function Button({ label, theme, href, icon }: Props) {
           style={[styles.button, { backgroundColor: "#fff" }]}
           asChild
         >
-          <Pressable>
+          <Pressable onPress={onPress ? () => onPress() : undefined}>
             {icon && (
               <FontAwesome
                 name={icon as any}
@@ -45,7 +46,7 @@ export default function Button({ label, theme, href, icon }: Props) {
         style={styles.button}
         asChild
       >
-        <Pressable>
+        <Pressable onPress={onPress ? () => onPress() : undefined}>
           {icon && (
             <FontAwesome
               name={icon as any}

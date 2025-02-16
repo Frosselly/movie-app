@@ -26,11 +26,11 @@ type movieDbQueryParams = {
 export const Queries = {
 
     //Popular movies page 1
-    getMovies: async function (params : URLSearchParams): Promise<Movie[]> {
+    getMovies: async function (params : URLSearchParams, uniqueUrl? : string): Promise<Movie[]> {
         // const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';;
         
 
-        const url = `https://api.themoviedb.org/3/discover/movie?${params}`;
+        const url = uniqueUrl ? uniqueUrl : `https://api.themoviedb.org/3/discover/movie?${params}`;
 
         const movies = await fetch(url, options)
         .then(response => response.json())
@@ -213,6 +213,68 @@ export const Queries = {
         });
 
         return this.getMovies(urlParams);
+    },
+
+    getSavedMovies: async function (sessionId: string) {
+        // https://api.themoviedb.org/3/account/account_id?session_id={{session_id}}
+        // https://api.themoviedb.org/3/account/account_id/watchlist/movies?language=en-US&page=1&sort_by=created_at.asc?session_id={{session_id}}
+        const url = `https://api.themoviedb.org/3/account/account_id/watchlist/movies?language=en-US&page=1&sort_by=created_at.asc?session_id=${sessionId}`
+        const urlParams = new URLSearchParams({})
+        return this.getMovies(urlParams, url);
+    },
+
+    addToLibrary: async function (sessionId: string, movieId: number) {
+        // {
+        //     "media_type": "movie",
+        //     "media_id": 11,
+        //     "watchlist": true
+        //   }
+        console.log("Adding to library ", sessionId, movieId)
+        const url = `https://api.themoviedb.org/3/account/account_id/watchlist?session_id=${sessionId}`
+        return fetch(url, {
+            method:'POST',
+            headers: {
+                accept: 'application/json',
+                "content-type": 'application/json',
+                Authorization: 'Bearer ' + process.env.EXPO_PUBLIC_MOVIEDB_RAT,
+               },
+            body: JSON.stringify({
+                "media_type": "movie",
+                "media_id": movieId,
+                "watchlist": true
+            })
+        }).then(response => response.json())
+    },
+
+    removeFromLibrary: async function (sessionId: string, movieId: number) {
+        console.log("Removing from library ", sessionId, movieId)
+        const url = `https://api.themoviedb.org/3/account/account_id/watchlist?session_id=${sessionId}`
+        return fetch(url, {
+            method:'POST',
+            headers: {
+                accept: 'application/json',
+                "content-type": 'application/json',
+                Authorization: 'Bearer ' + process.env.EXPO_PUBLIC_MOVIEDB_RAT,
+               },
+            body: JSON.stringify({
+                "media_type": "movie",
+                "media_id": movieId,
+                "watchlist": false
+            })
+        }).then(response => response.json())
+    },
+
+    checkWatchlist: async function (sessionId: string, movieId: number) {
+        console.log("Checking watchlist ", sessionId, movieId)
+        // https://api.themoviedb.org/3/account/account_id/watchlist?session_id={{session_id}}
+        const url = `https://api.themoviedb.org/3/movie/${movieId}/account_states?session_id=${sessionId}`
+        return fetch(url, options)
+        .then(response => response.json())
+        .then(json => {
+            console.log("Watchlist ", json.watchlist)
+            return json.watchlist;
+        })
     }
+
 
 }

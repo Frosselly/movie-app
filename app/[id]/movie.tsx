@@ -23,15 +23,28 @@ export default function MovieDetails() {
 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [movie, setMovie] = useState<Movie>(fallbackMovie);
+  const [inLibrary, setInLibrary] = useState(false);
 
   useEffect(() => {
     Storage.getData("all-movies").then((movies) => {
       const movie = movies.find((movie: Movie) => movie.id === parseInt(id));
       setMovie(movie);
+
       console.log(movie);
+
       getMovieGenres(movie.id);
+      checkIfInLibrary(movie.id);
     });
   }, [id]);
+
+  const checkIfInLibrary = async (movieId: number) => {
+    const sessionId = await Storage.getData("sessionId");
+    if (sessionId) {
+      const isInWatchlist = await Queries.checkWatchlist(sessionId, movieId);
+      setInLibrary(isInWatchlist);
+      console.log("isInWatchlist ", isInWatchlist);
+    }
+  };
 
   const getMovieGenres = async (id: number) => {
     const genres = await Queries.getMovieGenres(id);
@@ -44,10 +57,28 @@ export default function MovieDetails() {
 
     setMovies(moviesByGenres);
 
-    const allMovies = await Storage.getData("all-movies")
+    const allMovies = await Storage.getData("all-movies");
     Storage.storeData("all-movies", [...allMovies, ...moviesByGenres]);
 
     return genres;
+  };
+
+  const addToLibrary = async () => {
+    const sessionId = await Storage.getData("sessionId");
+    if (sessionId) {
+      const req = await Queries.addToLibrary(sessionId, movie.id);
+      checkIfInLibrary(movie.id);
+      console.log("addToLibrary request ", req);
+    }
+  };
+
+  const removeFromLibrary = async () => {
+    const sessionId = await Storage.getData("sessionId");
+    if (sessionId) {
+      const req = await Queries.removeFromLibrary(sessionId, movie.id);
+      checkIfInLibrary(movie.id);
+      console.log("removeFromLibrary request ", req);
+    }
   };
 
   if (!movie) {
@@ -63,11 +94,12 @@ export default function MovieDetails() {
       style={{ backgroundColor: "#25292e" }}
       contentContainerStyle={styles.container}
     >
-      
       <View style={styles.content}>
-      <View style={styles.imageContainer}>
-        <ImageViewer imgSource={movie?.imgSource ?? fallbackMovie.imgSource} />
-      </View>
+        <View style={styles.imageContainer}>
+          <ImageViewer
+            imgSource={movie?.imgSource ?? fallbackMovie.imgSource}
+          />
+        </View>
         <View>
           <Text style={styles.title}>{movie.title}</Text>
           <Text style={styles.description}>{movie.description}</Text>
@@ -78,7 +110,19 @@ export default function MovieDetails() {
             theme="primary"
             label="Watch trailer"
           />
-          <Button href="./player" label="Add to library" />
+          {inLibrary ? (
+            <Button
+              href={`./movie`}
+              label="Remove from library"
+              onPress={removeFromLibrary}
+            />
+          ) : (
+            <Button
+              href={`./movie`}
+              label="Add to library"
+              onPress={addToLibrary}
+            />
+          )}
         </View>
       </View>
       {movies.length > 0 && (
@@ -102,9 +146,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
     gap: 25,
   },
-  imageContainer: {
-    
-  },
+  imageContainer: {},
   buttonContainer: {
     alignItems: "center",
     gap: 10,
@@ -121,6 +163,6 @@ const styles = StyleSheet.create({
   },
 
   movieContainer: {
-    gap:12
+    gap: 12,
   },
 });

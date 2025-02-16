@@ -1,14 +1,14 @@
 import MovieCard from "@/components/MovieCard";
 import MovieSection from "@/components/MovieSection";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import {
   RefreshControl,
   StyleSheet,
   View,
   ScrollView,
   ActivityIndicator,
-  Text
+  Text,
 } from "react-native";
 
 import { type Movie } from "@/utils/mock-data";
@@ -25,17 +25,50 @@ export default function Index() {
   const [movies, setMovies] = useState<Movie[][]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
+  const params = useLocalSearchParams();
+
+  const getSessionId = async (reqToken: string) => {
+    const sessionReq = await fetch(
+      `https://api.themoviedb.org/3/authentication/session/new?api_key=${process.env.EXPO_PUBLIC_MOVIEDB_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          request_token: `${reqToken}`,
+        }),
+      }
+    );
+    const sessionId = await sessionReq.json();
+    if(sessionId.success){
+      console.log("Session ID ", sessionId.session_id)
+      Storage.storeData("sessionId", sessionId.session_id)
+    }
+  };
+
+  
+
   useEffect(() => {
     const timeForRefresh = 1000 * 60 * 60; // 1 hour
     Storage.getTimeDiff().then((timeDiff) => {
       if (timeDiff > timeForRefresh) {
         console.log("Fetching movies...");
         fetchMovies();
-      }
-      else {
+      } else {
         getSavedMovies();
       }
     });
+
+    if(params) {
+      if(params.denied){
+        console.log("denied access")
+      }
+      if(params.approved){
+        console.log("approved access")
+        getSessionId(params.request_token as string)
+      }
+    }
   }, []);
 
   const fetchMovies = async () => {
@@ -61,56 +94,48 @@ export default function Index() {
       Storage.getData("released"),
     ]);
     setMovies([popular, upcoming, released]);
-    
-  }
+  };
 
   const onRefresh = useCallback(() => {
     fetchMovies();
   }, []);
 
-  if(!movies || !movies.length) {
-      return(
-        <View style={styles.container}>
-          <LoadingScreen />
-        </View>
-      )
-    }
-    
+  if (!movies || !movies.length) {
+    return (
+      <View style={styles.container}>
+        <LoadingScreen />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        
       >
         <Text style={styles.header}>Discover</Text>
         <View style={styles.moviesSection}>
-        <View style={styles.movieContainer}>
-          <MovieSection title="Popular" movies={movies[0]} />
-        </View>
-        <View style={styles.movieContainer}>
-          <MovieSection title="Upcoming" movies={movies[1]} />
-        </View>
-        <View style={styles.movieContainer}>
-          <MovieSection title="Released" movies={movies[2]} />
-        </View>
+          <View style={styles.movieContainer}>
+            <MovieSection title="Popular" movies={movies[0]} />
+          </View>
+          <View style={styles.movieContainer}>
+            <MovieSection title="Upcoming" movies={movies[1]} />
+          </View>
+          <View style={styles.movieContainer}>
+            <MovieSection title="Released" movies={movies[2]} />
+          </View>
         </View>
       </ScrollView>
-    
-    
     </SafeAreaView>
-    
   );
 }
 
 const styles = StyleSheet.create({
-  
   container: {
-    
     backgroundColor: "#25292e",
-    
+
     paddingLeft: 20,
     paddingVertical: 20,
   },
@@ -124,7 +149,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   movieContainer: {
-    gap:12
+    gap: 12,
   },
   header: {
     color: "#fff",

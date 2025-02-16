@@ -1,40 +1,62 @@
-import { Text, View, StyleSheet} from "react-native";
+import { Text, View, StyleSheet, Pressable} from "react-native";
 
 
 import Button from "@/components/Button";
-import { Link } from "expo-router";
+import * as Linking from 'expo-linking';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomePage() {
 
+  const login = async () => {
+    const request = await fetch(`https://api.themoviedb.org/3/authentication/token/new?api_key=${process.env.EXPO_PUBLIC_MOVIEDB_API_KEY}`)
+    const response = await request.json()
+    const reqToken = response.request_token
+    console.log("reqToken ", response.request_token)
+    const url = Linking.createURL(`./(tabs)`);
+    console.log("URL ", url)
+   
+    Linking.openURL(`https://www.themoviedb.org/authenticate/${reqToken}?redirect_to=${url}`)
+    // const accessReq = await fetch(`https://api.themoviedb.org/3/authentication/session/new?api_key=${process.env.EXPO_PUBLIC_MOVIEDB_API_KEY}&request_token=${reqToken}`)
+    // const accessRes = await accessReq.json()
+    // console.log("Access response ", accessRes)
+
+    
+  }
+
   return (
-    <View style={styles.contentContainer}>
+    <SafeAreaView style={styles.container}>
         <View>
-            <Text>
+            <Text style={styles.title}>
                 Flexn Presents
             </Text>
         </View>
-        <View style={styles.footerContainer}>
-            <Button href={'/(tabs)'} theme="primary" label='Movies'/>
-            <Button href="./movies" label='Login'/>
+        <View style={styles.buttons}>
+            <Button href='./(tabs)' theme="primary" label='Movies'/>
+            <Button href='./index' label='Login' onPress={login}/>
+            {/* <Button href="./movies" label='Login'/> */}
         </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  contentContainer: {
+  container: {
+    backgroundColor: "#25292e",
     flex: 1,
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 50,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    paddingTop: 120,
+    justifyContent: 'space-between'
   },
-  video: {
-    width: 350,
-    height: 275,
+  buttons: {
+    gap:10,
+    marginBottom: 40,
   },
-  footerContainer: {
-    flex: 1/3,
-    alignItems: 'center',
+  title: {
+    color: "#fff",
+    fontSize: 32,
+    fontWeight: 'bold',
+    
+    textAlign: 'center'
   },
 });
