@@ -8,7 +8,7 @@
 
 ## 17-02
 
-- [ ] Add remove from library
+- [x] Add remove from library
 - [ ] Change storage saving logic
 - [ ] Load more movies on scroll
 
