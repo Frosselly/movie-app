@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, RelativePathString, useNavigation } from "expo-router";
 
@@ -22,7 +22,7 @@ export default function Button({ label, theme, href, icon, onPress }: Props) {
           style={[styles.button, { backgroundColor: "#fff" }]}
           asChild
         >
-          <Pressable onPress={onPress ? () => onPress() : undefined}>
+          <TouchableOpacity onPress={onPress ? () => onPress() : undefined}>
             {icon && (
               <FontAwesome
                 name={icon as any}
@@ -34,7 +34,7 @@ export default function Button({ label, theme, href, icon, onPress }: Props) {
             <Text style={[styles.buttonLabel, { color: "#25292e" }]}>
               {label}
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </Link>
       </View>
     );

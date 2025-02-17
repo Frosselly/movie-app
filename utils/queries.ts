@@ -72,24 +72,24 @@ export const Queries = {
         
     },
 
-    getPopularMovies: async function (): Promise<Movie[]> {
+    getPopularMovies: async function (page: number): Promise<Movie[]> {
         const urlParams = new URLSearchParams({
             'sort_by': 'popularity.desc',
             "language": 'en-US',
-            "page": '1',
+            "page": `${page}`,
             'include_adult': 'false',
         });
 
         return this.getMovies(urlParams);
     },
 
-    getReleasedMovies: async function (): Promise<Movie[]> {
+    getReleasedMovies: async function (page: number): Promise<Movie[]> {
         const utc = new Date().toISOString().slice(0, 10)
 
         const urlParams = new URLSearchParams({
             'sort_by': 'primary_release_date.desc',
             "language": 'en-US',
-            "page": '1',
+            "page": `${page}`,
             'include_adult': 'false',
             'primary_release_date.lte': utc
         });
@@ -98,7 +98,7 @@ export const Queries = {
     },
 
 
-    getUpcomingMovies: async function(): Promise<Movie[]> {
+    getUpcomingMovies: async function(page: number): Promise<Movie[]> {
         const today = new Date()
         today.setDate(today.getDate() + 1)
         const utc = new Date(today).toISOString().slice(0, 10);
@@ -107,7 +107,7 @@ export const Queries = {
         const urlParams = new URLSearchParams({
             'sort_by': 'primary_release_date.asc',
             "language": 'en-US',
-            "page": '1',
+            "page": `${page}`,
             'include_adult': 'false',
             'primary_release_date.gte': utc
         });

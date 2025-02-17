@@ -25,6 +25,7 @@ export default function Index() {
   const [movies, setMovies] = useState<Movie[][]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
+
   const params = useLocalSearchParams();
 
   const getSessionId = async (reqToken: string) => {
@@ -41,13 +42,11 @@ export default function Index() {
       }
     );
     const sessionId = await sessionReq.json();
-    if(sessionId.success){
-      console.log("Session ID ", sessionId.session_id)
-      Storage.storeData("sessionId", sessionId.session_id)
+    if (sessionId.success) {
+      console.log("Session ID ", sessionId.session_id);
+      Storage.storeData("sessionId", sessionId.session_id);
     }
   };
-
-  
 
   useEffect(() => {
     const timeForRefresh = 1000 * 60 * 60; // 1 hour
@@ -60,22 +59,22 @@ export default function Index() {
       }
     });
 
-    if(params) {
-      if(params.denied){
-        console.log("denied access")
+    if (params) {
+      if (params.denied) {
+        console.log("denied access");
       }
-      if(params.approved){
-        console.log("approved access")
-        getSessionId(params.request_token as string)
+      if (params.approved) {
+        console.log("approved access");
+        getSessionId(params.request_token as string);
       }
     }
   }, []);
 
   const fetchMovies = async () => {
     const [popular, upcoming, released] = await Promise.all([
-      Queries.getPopularMovies(),
-      Queries.getUpcomingMovies(),
-      Queries.getReleasedMovies(),
+      Queries.getPopularMovies(1),
+      Queries.getUpcomingMovies(1),
+      Queries.getReleasedMovies(1),
     ]);
     const fetchedMovies = [popular, upcoming, released];
     setMovies(fetchedMovies);
@@ -100,6 +99,22 @@ export default function Index() {
     fetchMovies();
   }, []);
 
+  const nextPagePopular = async (page: number) => {
+    console.log("next page ", page);
+    if(page > 2) return;
+    const populars = await Queries.getPopularMovies(page)
+    const merged = [...movies[0], ...populars]
+    Storage.storeData("popular", merged);
+    setMovies([merged, ...movies.slice(1)]);
+    
+  };
+  const nextPageUpcoming =  async (page: number) => {
+    console.log("next page");
+  };
+  const nextPageReleased = async  (page: number) => {
+    console.log("next page");
+  };
+
   if (!movies || !movies.length) {
     return (
       <View style={styles.container}>
@@ -118,13 +133,13 @@ export default function Index() {
         <Text style={styles.header}>Discover</Text>
         <View style={styles.moviesSection}>
           <View style={styles.movieContainer}>
-            <MovieSection title="Popular" movies={movies[0]} />
+            <MovieSection title="Popular" movies={movies[0]} addPage={(page) => nextPagePopular(page)}/>
           </View>
           <View style={styles.movieContainer}>
-            <MovieSection title="Upcoming" movies={movies[1]} />
+            <MovieSection title="Upcoming" movies={movies[1]} addPage={(page) => nextPageUpcoming(page)}/>
           </View>
           <View style={styles.movieContainer}>
-            <MovieSection title="Released" movies={movies[2]} />
+            <MovieSection title="Released" movies={movies[2]} addPage={(page) => nextPageReleased(page)}/>
           </View>
         </View>
       </ScrollView>
