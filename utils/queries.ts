@@ -67,7 +67,10 @@ export const Queries = {
             }
             movie.videoSource = videoSource.key;
             return movie;
-        }))
+        })).catch(error => {
+            console.log(error);
+            return resolved;
+        });
         return moviesWithVideo;
         
     },

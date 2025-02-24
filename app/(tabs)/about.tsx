@@ -16,7 +16,7 @@ export default function HomePage() {
   }
 
   const clearLogin = async () => {
-    Storage.storeData("sessionId", '' as any);
+    Storage.storeAuthKey('');
 }
 
   return (

@@ -14,12 +14,13 @@ const Library = () => {
   }, []);
 
   const getSavedMovies = async () => {
-    const sessionId = await Storage.getData("sessionId");
+    const sessionId = await Storage.getAuthKey();
+    console.log("Session ID ", sessionId);
     if (!sessionId) return;
     const movies = await Queries.getSavedMovies(sessionId);
-
     const allMovies = await Storage.getData("all-movies")
-    Storage.storeData("all-movies", [...allMovies, ...movies]);
+    
+    Storage.storeData("all-movies", [...Array.from<Movie>(allMovies.values()), ...movies]);
     setMovies(movies);
   };
 

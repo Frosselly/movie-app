@@ -1,30 +1,27 @@
-import MovieCard from "@/components/MovieCard";
+import { useCallback, useEffect, useState } from "react";
+import { Storage } from "@/utils/storage";
+import { Queries } from "@/utils/queries";
+import { type Movie } from "@/utils/mock-data";
+import LoadingScreen from "@/components/LoadingScreen";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useMovieContext } from "@/utils/movieContext";
+import Button from "@/components/Button";
 import MovieSection from "@/components/MovieSection";
-import { Image } from "expo-image";
-import { Link, useLocalSearchParams } from "expo-router";
 import {
   RefreshControl,
   StyleSheet,
   View,
   ScrollView,
-  ActivityIndicator,
   Text,
 } from "react-native";
-
-import { type Movie } from "@/utils/mock-data";
-
-import { useCallback, useEffect, useState } from "react";
-import { Storage } from "@/utils/storage";
-import { Queries } from "@/utils/queries";
-
-import { movies as mockMovies } from "@/utils/mock-data";
-import LoadingScreen from "@/components/LoadingScreen";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from "expo-router";
 
 export default function Index() {
-  const [movies, setMovies] = useState<Movie[][]>([]);
+  const [movies, setMovies] = useState<Map<string, Map<string, Movie>>>(
+    new Map()
+  );
   const [refreshing, setRefreshing] = useState(false);
-
+  Storage.context = useMovieContext();
 
   const params = useLocalSearchParams();
 
@@ -44,7 +41,7 @@ export default function Index() {
     const sessionId = await sessionReq.json();
     if (sessionId.success) {
       console.log("Session ID ", sessionId.session_id);
-      Storage.storeData("sessionId", sessionId.session_id);
+      Storage.storeAuthKey(sessionId.session_id);
     }
   };
 
@@ -71,51 +68,86 @@ export default function Index() {
   }, []);
 
   const fetchMovies = async () => {
+    console.log("FETCHING movies");
     const [popular, upcoming, released] = await Promise.all([
       Queries.getPopularMovies(1),
       Queries.getUpcomingMovies(1),
       Queries.getReleasedMovies(1),
     ]);
     const fetchedMovies = [popular, upcoming, released];
-    setMovies(fetchedMovies);
+    const moviesMap = new Map<string, Map<string, Movie>>();
+    moviesMap.set(
+      "popular",
+      new Map(popular.map((movie) => [`${movie.id}`, movie]))
+    );
+    moviesMap.set(
+      "upcoming",
+      new Map(upcoming.map((movie) => [`${movie.id}`, movie]))
+    );
+    moviesMap.set(
+      "released",
+      new Map(released.map((movie) => [`${movie.id}`, movie]))
+    );
+    setMovies(moviesMap);
 
     Storage.storeTime();
     Storage.storeData("popular", fetchedMovies[0]);
     Storage.storeData("upcoming", fetchedMovies[1]);
     Storage.storeData("released", fetchedMovies[2]);
     Storage.storeData("all-movies", fetchedMovies.flat());
+    console.log("FETCHING movies Finished");
+    console.log("fetched and stored movies: ", await Storage.getData("popular"));
   };
 
   const getSavedMovies = async () => {
+    console.log("GETTING SAVED MOVIES");
     const [popular, upcoming, released] = await Promise.all([
       Storage.getData("popular"),
       Storage.getData("upcoming"),
       Storage.getData("released"),
     ]);
-    setMovies([popular, upcoming, released]);
+    const moviesMap = new Map<string, Map<string, Movie>>();
+    moviesMap.set("popular", new Map(popular));
+    moviesMap.set("upcoming", new Map(upcoming));
+    moviesMap.set("released", new Map(released));
+    setMovies(moviesMap);
+    console.log("GETTING SAVED MOVIES FINISHED");
   };
 
   const onRefresh = useCallback(() => {
     fetchMovies();
   }, []);
 
-  const nextPagePopular = async (page: number) => {
-    console.log("next page ", page);
-    if(page > 2) return;
-    const populars = await Queries.getPopularMovies(page)
-    const merged = [...movies[0], ...populars]
-    Storage.storeData("popular", merged);
-    setMovies([merged, ...movies.slice(1)]);
-    
-  };
-  const nextPageUpcoming =  async (page: number) => {
-    console.log("next page");
-  };
-  const nextPageReleased = async  (page: number) => {
-    console.log("next page");
+  const nextPage = async (key: string, page: number) => {
+    console.log(`nextPage called for ${key} page ${page}`);
+    let queryMovies: Movie[] = [];
+    if (key === "popular") {
+      queryMovies = await Queries.getPopularMovies(page);
+    } else if (key === "upcoming") {
+      queryMovies = await Queries.getUpcomingMovies(page);
+    } else if (key === "released") {
+      queryMovies = await Queries.getReleasedMovies(page);
+    }
+  
+    if (queryMovies.length > 0) {
+      await Storage.storeNextPage(key, queryMovies);
+  
+      // Update local state after storing
+      setMovies((prevMovies) => {
+        const updatedMoviesMap = new Map(prevMovies); // Copy existing movies
+        const categoryMovies = new Map(updatedMoviesMap.get(key)); // Get existing category movies
+        queryMovies.forEach(movie => {
+          categoryMovies.set(movie.id.toString(), movie); // Add new movies to category
+        });
+        updatedMoviesMap.set(key, categoryMovies); // Update specific category
+        return updatedMoviesMap;
+      });
+  
+      console.log(`nextPage setMovies called for ${key} page ${page}`);
+    }
   };
 
-  if (!movies || !movies.length) {
+  if (!movies || !movies.size) {
     return (
       <View style={styles.container}>
         <LoadingScreen />
@@ -130,16 +162,29 @@ export default function Index() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
+        <Button onPress={onRefresh} label="Refresh" href="./" />
         <Text style={styles.header}>Discover</Text>
         <View style={styles.moviesSection}>
           <View style={styles.movieContainer}>
-            <MovieSection title="Popular" movies={movies[0]} addPage={(page) => nextPagePopular(page)}/>
+            <MovieSection
+              title="Popular"
+              movies={movies.get("popular") || new Map()}
+              addPage={(page) => nextPage("popular", page)}
+            />
           </View>
           <View style={styles.movieContainer}>
-            <MovieSection title="Upcoming" movies={movies[1]} addPage={(page) => nextPageUpcoming(page)}/>
+            <MovieSection
+              title="Upcoming"
+              movies={movies.get("upcoming") || new Map()}
+              addPage={(page) => nextPage("upcoming", page)}
+            />
           </View>
           <View style={styles.movieContainer}>
-            <MovieSection title="Released" movies={movies[2]} addPage={(page) => nextPageReleased(page)}/>
+            <MovieSection
+              title="Released"
+              movies={movies.get("released") || new Map()}
+              addPage={(page) => nextPage("released", page)}
+            />
           </View>
         </View>
       </ScrollView>

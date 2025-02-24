@@ -1,8 +1,11 @@
+import { MovieProvider } from "@/utils/movieContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 
 export default function RootLayout() {
+
   return (
+    <MovieProvider>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#ffd33d",
@@ -63,5 +66,6 @@ export default function RootLayout() {
       />
       
     </Tabs>
+    </MovieProvider>
   );
 }

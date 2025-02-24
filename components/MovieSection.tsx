@@ -5,11 +5,11 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 
 
 export default function MovieSection(props : {
-  movies: Movie[],
+  movies: Map<string, Movie>,
   title: string,
   addPage: (page:number) => void
 }) {
-  const [offset, setOffset] = useState(props.movies.length * 150 * 0.5);
+  const [offset, setOffset] = useState(props.movies.size * 150 * 0.5);
   const [page, setPage] = useState(1);
 
   return (
@@ -21,17 +21,17 @@ export default function MovieSection(props : {
             const scrollOffset = event.nativeEvent.contentOffset.x;
             if(scrollOffset > offset){
               console.log("Reached scroll", offset);
-              console.log("movie len", props.movies.length);
+              console.log("movie len", props.movies.size);
               
               setOffset(scrollOffset + offset);
               props.addPage(page + 1);
               setPage(page + 1);
             }
                 
-          }}
-          horizontal={true}
-          data={props.movies}
-          renderItem={({item: movie}) => {
+            }}
+            horizontal={true}
+            data={Array.from(props.movies.values())}
+            renderItem={({item: movie}) => {
               return (
                   <View style={styles.movieContainer}>
                       <MovieCard movie={movie} />

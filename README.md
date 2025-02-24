@@ -6,9 +6,13 @@
 - [x] User login
 
 
-## 17-02
+## 24-02
 
 - [ ] Add remove from library
 - [ ] Change storage saving logic
-- [ ] Load more movies on scroll
+- [x] Load more movies on scroll
 
+Problems:
+
+- movie page has bugs
+- movies not saved in async or if not found to redirect to not found page

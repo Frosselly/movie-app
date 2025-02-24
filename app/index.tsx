@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, Pressable} from "react-native";
-
+import { MovieProvider } from "@/utils/movieContext";
 
 import Button from "@/components/Button";
 import * as Linking from 'expo-linking';
@@ -24,6 +24,7 @@ export default function HomePage() {
   }
 
   return (
+    
     <SafeAreaView style={styles.container}>
         <View>
             <Text style={styles.title}>
